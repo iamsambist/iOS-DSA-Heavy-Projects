@@ -9,7 +9,9 @@ import SwiftUI
 
 struct GameView: View {
     @StateObject private var viewModel: MazeViewModel
-    init(column: Int, row: Int) {
+    var onCloseGame: (() -> Void)
+    init(column: Int, row: Int, `var` closeGame: @escaping () -> Void) {
+        self.onCloseGame = closeGame
         _viewModel = StateObject(wrappedValue: MazeViewModel(col: column, row: row))
     }
 
@@ -64,18 +66,37 @@ struct GameView: View {
                      .shadow(color: .black.opacity(0.2), radius: 12, x: 0, y: 0)
                      
                  }
-            Button(action: {
-                viewModel.solveMaze()
-            }, label: {
-                Text("Let's Begin")
-                    .foregroundStyle(.white)
-            })
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 10)
-            .background(Color.green.opacity(0.6))
-            .cornerRadius(10)
+            HStack {
+                Button(action: {
+                    Task {
+                            let solved = await viewModel.solveMaze()
+                            print("Maze solved:", solved)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                            viewModel.gameOver.toggle()
+                        }
+                }
+                }, label: {
+                    Text("Let's Begin")
+                        .foregroundStyle(.white)
+                })
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+                .background(Color.green.opacity(0.6))
+                .cornerRadius(10)
+                
+                
+                Button(action: {
+                    onCloseGame()
+                }, label: {
+                    Text("New Grid")
+                        .foregroundStyle(.white)
+                })
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+                .background(Color.green.opacity(0.6))
+                .cornerRadius(10)
+            }
             .padding(.horizontal, 20)
-            .padding(.vertical, 20)
             
             
            
@@ -91,5 +112,5 @@ struct GameView: View {
 }
 
 #Preview {
-    GameView(column: 3, row: 3)
+    GameView(column: 3, row: 3, var: {})
 }

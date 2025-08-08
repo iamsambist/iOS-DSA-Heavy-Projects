@@ -13,7 +13,9 @@ struct OnBoardingScreen: View {
     @State var row: Int = 3
     var body: some View {
         if isOnBoardingCompleted {
-            GameView(column: coloumn, row: row)
+            GameView(column: coloumn, row: row) {
+                isOnBoardingCompleted.toggle()
+            }
         } else {
             MazeSelectionView() { row, col in
                 self.row = row

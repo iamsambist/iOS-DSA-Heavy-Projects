@@ -12,6 +12,13 @@ final class MazeViewModel: ObservableObject {
     @Published var row: Int = 0
     @Published var col: Int = 0
     @Published var mazeitems: [[MazeItem]] = []
+    @Published var gameOver: Bool = false {
+        didSet {
+            if gameOver {
+                resetGame()
+            }
+        }
+    }
     init (col: Int, row: Int) {
         self.row = row
         self.col = col
@@ -27,31 +34,53 @@ final class MazeViewModel: ObservableObject {
         self.mazeitems = items
     }
     
-    func solveMaze( _ x: Int = 0, _ y: Int = 0 ) -> Bool {
+    func resetGame() {
+        
+        var items: [[MazeItem]] = []
+        for _ in 0..<row {
+            var rowItems: [MazeItem] = []
+            for _ in 0..<col {
+                rowItems.append(MazeItem(isWall: false, isVisited: false))
+            }
+            items.append(rowItems)
+        }
+        
+        self.mazeitems = items
+    }
+    
+    func solveMaze( _ x: Int = 0, _ y: Int = 0 ) async -> Bool {
         if x == row - 1 && y == col - 1 {
-            mazeitems[x][y].isVisited = true
+            await MainActor.run {
+                mazeitems[x][y].isVisited = true
+            }
+            
             return true
         }
         
         if isSafe(mazeitems, x, y ) {
+            await MainActor.run {
+                mazeitems[x][y].isVisited = true
+            }
+            try? await Task.sleep(nanoseconds: 300_000_000)
             
-            mazeitems[x][y].isVisited = true
-            if solveMaze( x + 1, y ) {
+            if await solveMaze( x + 1, y ) {
                 return true
             }
-            if solveMaze( x, y + 1 ) {
-                return true
-            }
-            
-            if solveMaze( x - 1, y ) {
-                return true
-            }
-            
-            if solveMaze( x, y - 1 ) {
+            if await solveMaze( x, y + 1 ) {
                 return true
             }
             
-            mazeitems[x][y].isVisited = false
+            if await solveMaze( x - 1, y ) {
+                return true
+            }
+            
+            if await solveMaze( x, y - 1 ) {
+                return true
+            }
+            await MainActor.run {
+                mazeitems[x][y].isVisited = false
+            }
+            
             return false
         }
         
