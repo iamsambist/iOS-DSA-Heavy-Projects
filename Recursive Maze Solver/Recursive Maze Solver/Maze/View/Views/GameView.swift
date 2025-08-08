@@ -23,8 +23,8 @@ struct GameView: View {
     var body: some View {
         VStack {
             VStack (spacing: 10){
-                Text("Game will start at First Cell index 0,0 and ends at the last cell, You can place obstacles in the way and see how algorithm finds the way")
-                Text("Tap on item to make it obstacles")
+                Text("Wanna let GOOOOOOOOO...")
+                Text("RED = WALLs, GREEN = GROUND, GRAY = VISITED PATH")
             }
             .foregroundStyle(.gray)
             .multilineTextAlignment(.center)
