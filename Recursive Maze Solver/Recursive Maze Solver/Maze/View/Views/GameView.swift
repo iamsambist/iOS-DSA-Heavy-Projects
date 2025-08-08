@@ -71,7 +71,7 @@ struct GameView: View {
                     Task {
                             let solved = await viewModel.solveMaze()
                             print("Maze solved:", solved)
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
                             viewModel.gameOver.toggle()
                         }
                 }
