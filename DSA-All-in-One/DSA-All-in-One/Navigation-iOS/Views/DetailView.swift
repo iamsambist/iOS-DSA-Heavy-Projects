@@ -25,9 +25,19 @@ struct DetailView: View {
                 
         }
         .onAppear {
-            if case let .details(detailCase) = stackManager.currentScreen {
-                self.itemID = detailCase
+            
+            switch stackManager.currentScreen {
+                case .details(let item):
+                self.itemID = item
+                
+            default:
+                break
             }
+//            if case let .details(detailCase) = stackManager.currentScreen {
+//                self.itemID = detailCase
+//            }
+            
+            // Both did the same things -- 
         }
     }
 }
