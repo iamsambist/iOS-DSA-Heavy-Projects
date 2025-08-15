@@ -11,7 +11,7 @@ import SwiftUI
 struct DSA_All_in_OneApp: App {
     var body: some Scene {
         WindowGroup {
-            RootNavView()
+            RootQuoteView()
         }
     }
 }
